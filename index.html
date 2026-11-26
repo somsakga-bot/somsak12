@@ -36,9 +36,9 @@ footer{background:#14532d;color:#86efac;text-align:center;padding:16px;margin-to
 <div id="modal"><div id="mf"></div></div>
 <footer>ตำรวจปราจีนบุรี ยินดีรับใช้ และดูแลประชาชน</footer>
 <script>
-const API='https://script.google.com/macros/s/AKfycbxB0cpdaOqDhClGs-It-IDiN2VAxBbtUWGOK_gJ0mahxt0d3kdEafve2SeUEJ7RH04KQQ/exec';
+const API='ใส่ URL Web App (Apps Script) ที่นี่';
 // พิกัดโดยประมาณของ สภ. (ปรับแก้ได้) ใช้ซูมแผนที่
-const ST={'สภ.เมืองปราจีนบุรี':[14.05,101.37],'สภ.กบินทร์บุรี':[13.99,101.71],'สภ.ศรีมหาโพธิ':[13.99,101.45],'สภ.ประจันตคาม':[14.07,101.53],'สภ.ศรีมโหสถ':[13.93,101.42],'สภ.บ้านสร้าง':[13.96,101.25],'สภ.นาดี':[14.05,101.80],'สภ.ระเบาะไผ่':[14.10,101.50],'สภ.สระบัว':[13.97,101.62],'สภ.วังตะเคียน':[14.00,101.78],'สภ.วังขอนแดง':[14.02,101.60]};
+const ST={'สภ.เมืองปราจีนบุรี':[14.05,101.37],'สภ.กบินทร์บุรี':[13.99,101.71],'สภ.ศรีมหาโพธิ':[13.99,101.45],'สภ.ประจันตคาม':[14.07,101.53],'สภ.ศรีมโหสถ':[13.93,101.42],'สภ.บ้านสร้าง':[13.96,101.25],'สภ.นาดี':[14.05,101.80],'สภ.ระเบาะไผ่':[13.8574064,101.5351682,13.33],'สภ.สระบัว':[13.8126069,101.6599919,13.5],'สภ.วังตะเคียน':[13.8286729,101.8645303,14.08],'สภ.วังขอนแดง':[14.02,101.60]};
 const STN=Object.keys(ST);
 const CFG={
 cases:{t:'สภ.ในสังกัด (11 สภ.)',c:'#1565c0',f:[['station','สภ.','s'],['caseNo','เลขคดี','t'],['caseDate','วันที่รับคดี','d'],['suspects','ผู้ต้องหา (ชื่อ นามสกุล อายุ — 1 คนต่อ 1 บรรทัด, ถ้าไม่ทราบให้ระบุ "ไม่ทราบ")','a'],['charge','ข้อหา','t'],['business','สถานประกอบการ (ชื่อ)','t'],['address','ที่ตั้ง หมู่ที่ ตำบล อำเภอ จังหวัด','t'],['evidence','ของกลาง (ชื่อ จำนวน)','a'],['steps','ขั้นตอนการทำสำนวน (ถึงขั้นตอนใดแล้ว)','a'],['bail','การประกันตัว / ควบคุมอยู่ที่ใด','a'],['officer','ยศ ชื่อ นามสกุล พงส.','t'],['phone','เบอร์โทร พงส.','t'],['note','หมายเหตุ','a']],img:1,map:1},
@@ -60,8 +60,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'�
 rows.forEach(r=>{if(r.lat&&r.lng)L.marker([+r.lat,+r.lng]).addTo(map).bindPopup(`<b>${e(r.business||r.place)}</b><br>${e(r.address||'')}<br>${r.station?e(r.station)+' คดี '+e(r.caseNo):'สืบสวน '+dt(r.date)}`)});
 if(z)zoomTo(z);
 }
-const Q={'สภ.ระเบาะไผ่':'วัดระเบาะไผ่ ปทุมวนาวาส ปราจีนบุรี','สภ.สระบัว':'สถานีอนามัยตำบลลาดตะเคียน ปราจีนบุรี','สภ.วังตะเคียน':'องค์การบริหารส่วนตำบลวังตะเคียน ปราจีนบุรี'},GC={};
-async function zoomTo(z){map.setView(GC[z]||ST[z],13);if(Q[z]&&!GC[z]){try{const j=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=th&accept-language=th&q='+encodeURIComponent(Q[z]))).json();const a=j[0]&&+j[0].lat,b=j[0]&&+j[0].lon;if(a>13.6&&a<14.6&&b>101&&b<102.2){GC[z]=[a,b];map.setView(GC[z],15)}}catch(x){}}}
+const Q={},GC={};
+async function zoomTo(z){map.setView(GC[z]||ST[z].slice(0,2),ST[z][2]||13);if(Q[z]&&!GC[z]){try{const j=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=th&accept-language=th&q='+encodeURIComponent(Q[z]))).json();const a=j[0]&&+j[0].lat,b=j[0]&&+j[0].lon;if(a>13.6&&a<14.6&&b>101&&b<102.2){GC[z]=[a,b];map.setView(GC[z],15)}}catch(x){}}}
 function fs(){$('#mapbox').classList.toggle('fs');setTimeout(()=>map.invalidateSize(),200)}
 function list(){const c=CFG[view],all=D[view]||[],rows=view=='cases'&&flt?all.filter(r=>r.station==flt):all;
 const tb=`<button class="g" onclick="go('home')">⬅ ย้อนกลับ</button><button onclick="print()" style="--c:#00695c">🖨 พิมพ์รายงาน</button><button onclick="edit()">✏ เพิ่ม/แก้ไขข้อมูล</button>`;
