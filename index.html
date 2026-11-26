@@ -22,26 +22,27 @@ button.g{background:#777}button.r{background:#c62828}
 #mapbox .tb{position:absolute;top:8px;right:8px;z-index:900}.fsonly{display:none}.fs .fsonly{display:inline-block}
 .rec h3{margin:0 0 6px;color:var(--c)}.rec p{margin:3px 0;white-space:pre-wrap}.rec p b{color:#555}
 .imgs img{height:90px;margin:3px;border-radius:6px}
-#modal{display:none;position:fixed;inset:0;background:#0008;z-index:2000;overflow:auto}
-#modal>div{background:#fff;max-width:640px;margin:10px auto;padding:14px;border-radius:12px}
+#modal{display:none;position:fixed;inset:0;z-index:2000;pointer-events:none}
+#modal>div{pointer-events:auto;background:#fff;position:fixed;left:50%;top:10px;transform:translateX(-50%);width:min(640px,96vw);max-height:94vh;overflow:auto;padding:14px;border-radius:12px;box-shadow:0 4px 24px #0007}
+#dh{cursor:move;touch-action:none;background:#37474f;color:#fff;margin:-14px -14px 8px;padding:8px 14px;border-radius:12px 12px 0 0;position:sticky;top:-14px;z-index:5;user-select:none}
 label{display:block;margin-top:8px;font-weight:600;font-size:.9rem}
 input,select,textarea{width:100%;padding:8px;border:1px solid #bbb;border-radius:6px;font:inherit}
 #pm{height:220px;margin-top:4px}.thumb{display:inline-block;position:relative}.thumb span{position:absolute;top:0;right:0;background:#c62828;color:#fff;cursor:pointer;padding:0 6px}
 footer{background:#14532d;color:#86efac;text-align:center;padding:16px;margin-top:20px;font-weight:700;font-size:1.1rem}
 @media print{header img+div small,.bar,.chips,.tb,button,#modal{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #999;break-inside:avoid}}
 </style></head><body>
-<header><img src="logo.jpg" alt="โลโก้" onerror="this.style.display='none'"><div><h1>รายงานผลการปฏิบัติ ป้องกันปราบปรามความผิดนอมินี และขยะอุตสาหกรรม</h1><small>ตำรวจภูธรจังหวัดปราจีนบุรี</small></div></header>
+<header><img src="logo.png" alt="โลโก้" onerror="this.style.display='none'"><div><h1>รายงานผลการปฏิบัติ ป้องกันปราบปรามความผิดนอมินี และขยะอุตสาหกรรม</h1><small>ตำรวจภูธรจังหวัดปราจีนบุรี</small></div></header>
 <main id="app">กำลังโหลด...</main>
 <div id="modal"><div id="mf"></div></div>
 <footer>ตำรวจปราจีนบุรี ยินดีรับใช้ และดูแลประชาชน</footer>
 <script>
-const API='https://script.google.com/macros/s/AKfycbyykiNNNV4S1Ne3H_4-4Fuai0eq9cq1DXuXi82arFEmZ4VryeenTxDIuKcIKGVwOugikQ/exec';
+const API='ใส่ URL Web App (Apps Script) ที่นี่';
 // พิกัดโดยประมาณของ สภ. (ปรับแก้ได้) ใช้ซูมแผนที่
 const ST={'สภ.เมืองปราจีนบุรี':[14.05,101.37],'สภ.กบินทร์บุรี':[13.99,101.71],'สภ.ศรีมหาโพธิ':[13.99,101.45],'สภ.ประจันตคาม':[14.07,101.53],'สภ.ศรีมโหสถ':[13.93,101.42],'สภ.บ้านสร้าง':[13.96,101.25],'สภ.นาดี':[14.05,101.80],'สภ.ระเบาะไผ่':[14.10,101.50],'สภ.สระบัว':[13.97,101.62],'สภ.วังตะเคียน':[14.00,101.78],'สภ.วังขอนแดง':[14.02,101.60]};
 const STN=Object.keys(ST);
 const CFG={
 cases:{t:'สภ.ในสังกัด (11 สภ.)',c:'#1565c0',f:[['station','สภ.','s'],['caseNo','เลขคดี','t'],['caseDate','วันที่รับคดี','d'],['suspects','ผู้ต้องหา (ชื่อ นามสกุล อายุ — 1 คนต่อ 1 บรรทัด, ถ้าไม่ทราบให้ระบุ "ไม่ทราบ")','a'],['charge','ข้อหา','t'],['business','สถานประกอบการ (ชื่อ)','t'],['address','ที่ตั้ง หมู่ที่ ตำบล อำเภอ จังหวัด','t'],['evidence','ของกลาง (ชื่อ จำนวน)','a'],['steps','ขั้นตอนการทำสำนวน (ถึงขั้นตอนใดแล้ว)','a'],['bail','การประกันตัว / ควบคุมอยู่ที่ใด','a'],['officer','ยศ ชื่อ นามสกุล พงส.','t'],['phone','เบอร์โทร พงส.','t'],['note','หมายเหตุ','a']],img:1,map:1},
-detective:{t:'กองกำกับการสืบสวน',c:'#e65100',f:[['date','วันที่รายงาน','d'],['total','ออกติดตามสืบสวนเป้าหมาย (แห่ง)','n'],['targets','ชื่อเป้าหมายการตรวจสอบทั้งหมด','a'],['done','ตรวจสอบแล้ว (แห่ง)','n'],['doneList','ตรวจสอบแล้วที่ใดบ้าง','a'],['ongoing','อยู่ระหว่างตรวจสอบ (แห่ง)','n'],['ongoingList','อยู่ระหว่างตรวจสอบที่ใดบ้าง','a'],['sus','เข้าข่ายอาจกระทำผิด (แห่ง)','n'],['susList','ชื่ออะไรบ้าง และดำเนินการอย่างไรต่อ','a'],['note','หมายเหตุ','a']],img:1},
+detective:{t:'กองกำกับการสืบสวน',c:'#e65100',f:[['date','วันที่รายงาน','d'],['place','สถานที่ตรวจสอบ (ชื่อสถานที่ / ที่อยู่)','t'],['total','ออกติดตามสืบสวนเป้าหมาย (แห่ง)','n'],['targets','ชื่อเป้าหมายการตรวจสอบทั้งหมด','a'],['done','ตรวจสอบแล้ว (แห่ง)','n'],['doneList','ตรวจสอบแล้วที่ใดบ้าง','a'],['ongoing','อยู่ระหว่างตรวจสอบ (แห่ง)','n'],['ongoingList','อยู่ระหว่างตรวจสอบที่ใดบ้าง','a'],['sus','เข้าข่ายอาจกระทำผิด (แห่ง)','n'],['susList','ชื่ออะไรบ้าง และดำเนินการอย่างไรต่อ','a'],['note','หมายเหตุ','a']],img:1,map:1},
 inquiry:{t:'กลุ่มงานสอบสวน',c:'#6a1b9a',f:[['date','ข้อมูล ณ วันที่','d'],['total','จำนวนคดีทั้งหมด (คดี)','n'],['stations','อยู่ในความรับผิดชอบ สภ.ใดบ้าง','a'],['nm','คดีนอมินี (คดี)','n'],['nmD','คดีนอมินี แต่ละคดีอยู่ขั้นตอนใด','a'],['wa','คดีขยะอุตสาหกรรม (คดี)','n'],['waD','คดีขยะอุตสาหกรรม แต่ละคดีอยู่ขั้นตอนใด','a'],['ot','คดีอื่นๆ ที่เกี่ยวข้อง (คดี)','n'],['otD','คดีอื่นๆ แต่ละคดีอยู่ขั้นตอนใด','a'],['prob','ปัญหาข้อขัดข้องในคดีใดบ้าง','a'],['note','หมายเหตุ','a']]}};
 const $=s=>document.querySelector(s),e=x=>String(x??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 const D={},PW={};let view='home',flt='',map,mk,cur,keep=[],files=[];
@@ -56,25 +57,28 @@ $('#app').innerHTML=`<div class="grid">${Object.entries(CFG).map(([k,c])=>`<div 
 mapInit(cs)}
 function mapInit(rows,z){if(map)map.remove();map=L.map('map').setView([14.05,101.55],9);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
-rows.forEach(r=>{if(r.lat&&r.lng)L.marker([+r.lat,+r.lng]).addTo(map).bindPopup(`<b>${e(r.business)}</b><br>${e(r.address)}<br>${e(r.station)} คดี ${e(r.caseNo)}`)});
-if(z)map.setView(ST[z],12);
+rows.forEach(r=>{if(r.lat&&r.lng)L.marker([+r.lat,+r.lng]).addTo(map).bindPopup(`<b>${e(r.business||r.place)}</b><br>${e(r.address||'')}<br>${r.station?e(r.station)+' คดี '+e(r.caseNo):'สืบสวน '+dt(r.date)}`)});
+if(z)zoomTo(z);
 }
+const Q={'สภ.ระเบาะไผ่':'วัดระเบาะไผ่ ปทุมวนาวาส ปราจีนบุรี','สภ.สระบัว':'สถานีอนามัยตำบลลาดตะเคียน ปราจีนบุรี','สภ.วังตะเคียน':'องค์การบริหารส่วนตำบลวังตะเคียน ปราจีนบุรี'},GC={};
+async function zoomTo(z){map.setView(GC[z]||ST[z],13);if(Q[z]&&!GC[z]){try{const j=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=th&accept-language=th&q='+encodeURIComponent(Q[z]))).json();const a=j[0]&&+j[0].lat,b=j[0]&&+j[0].lon;if(a>13.6&&a<14.6&&b>101&&b<102.2){GC[z]=[a,b];map.setView(GC[z],15)}}catch(x){}}}
 function fs(){$('#mapbox').classList.toggle('fs');setTimeout(()=>map.invalidateSize(),200)}
 function list(){const c=CFG[view],all=D[view]||[],rows=view=='cases'&&flt?all.filter(r=>r.station==flt):all;
 const tb=`<button class="g" onclick="go('home')">⬅ ย้อนกลับ</button><button onclick="print()" style="--c:#00695c">🖨 พิมพ์รายงาน</button><button onclick="edit()">✏ เพิ่ม/แก้ไขข้อมูล</button>`;
 $('#app').innerHTML=`<div style="--c:${c.c}"><h2 style="color:${c.c};margin:4px 0">${c.t}${flt?' — '+flt:''}</h2><div class="bar">${tb}</div>
-${c.map?`<div class="chips"><span class="chip ${flt?'':'on'}" onclick="go('cases')">ทั้งหมด (${all.length})</span>${STN.map(s=>`<span class="chip ${flt==s?'on':''}" onclick="go('cases','${s}')">${s} (${all.filter(r=>r.station==s).length})</span>`).join('')}</div>
+${c.map?`${view=='cases'?`<div class="chips"><span class="chip ${flt?'':'on'}" onclick="go('cases')">ทั้งหมด (${all.length})</span>${STN.map(s=>`<span class="chip ${flt==s?'on':''}" onclick="go('cases','${s}')">${s} (${all.filter(r=>r.station==s).length})</span>`).join('')}</div>`:''}
 <div id="mapbox"><div id="map"></div><div class="tb"><button onclick="fs()">⛶ เต็มจอ</button><span class="fsonly"><button class="g" onclick="fs()">⬅ ย้อนกลับ</button><button onclick="print()">🖨 พิมพ์</button><button onclick="edit()">✏ แก้ไขข้อมูล</button></span></div></div>`:''}
 ${rows.length?rows.map(r=>`<div class="card rec" style="margin-bottom:10px">${rec(r,c)}</div>`).join(''):'<div class="card">ยังไม่มีข้อมูล</div>'}</div>`;
 if(c.map)mapInit(rows,flt)}
 function rec(r,c){const im=String(r.images||'').split('\n').filter(x=>x);
-return `<h3>${e(r.business||r.caseNo||dt(r.date)||'รายการ')}</h3>`+c.f.filter(f=>r[f[0]]!==''&&r[f[0]]!==undefined).map(f=>`<p><b>${e(f[1].split(' (')[0])}:</b> ${e(f[2]=='d'?dt(r[f[0]]):r[f[0]])}</p>`).join('')+
+return `<h3>${e(r.business||r.place||r.caseNo||dt(r.date)||'รายการ')}</h3>`+c.f.filter(f=>r[f[0]]!==''&&r[f[0]]!==undefined).map(f=>`<p><b>${e(f[1].split(' (')[0])}:</b> ${e(f[2]=='d'?dt(r[f[0]]):r[f[0]])}</p>`).join('')+
 (im.length?`<div class="imgs">${im.map(u=>`<a href="${e(u)}" target="_blank"><img src="${e(u)}"></a>`).join('')}</div>`:'')+
 `<p><small>ผู้บันทึก: ${e(r.recorder)} · บันทึกเมื่อ ${tm(r['บันทึกเมื่อ'])}</small></p><button onclick="edit('${r.id}')">แก้ไข</button><button class="r" onclick="del('${r.id}')">ลบ</button>`}
 function ask(){if(!PW[view]){PW[view]=prompt('กรอกรหัสผ่านผู้บันทึก/แก้ไขข้อมูล')}return PW[view]}
 function edit(id){if(!ask())return;const c=CFG[view];cur=id?D[view].find(r=>r.id==id):{};keep=String(cur.images||'').split('\n').filter(x=>x);files=[];
 const inp=([k,l,t])=>{const v=e(t=='d'?dt(cur[k]):cur[k]);return `<label>${e(l)}</label>`+(t=='a'?`<textarea id="f_${k}" rows="3">${v}</textarea>`:t=='s'?`<select id="f_${k}">${STN.map(s=>`<option ${cur[k]==s?'selected':''}>${s}</option>`).join('')}</select>`:`<input id="f_${k}" type="${t=='d'?'date':t=='n'?'number':'text'}" value="${v}">`)};
-$('#mf').innerHTML=`<h3>${c.t}</h3>${c.f.map(inp).join('')}
+$('#modal>div').removeAttribute('style');
+$('#mf').innerHTML=`<div id="dh">✥ ลากที่แถบนี้เพื่อย้ายฟอร์ม</div><h3>${c.t}</h3>${c.f.map(inp).join('')}
 ${c.map?`<label>ปักหมุดสถานประกอบการ (แตะแผนที่)</label><div id="pm"></div><button type="button" class="g" onclick="gps()">📍 ใช้ตำแหน่งปัจจุบัน</button><small id="ll"></small>`:''}
 ${c.img?`<label>รูปภาพ (ไม่เกิน 6 ภาพ ภาพละไม่เกิน 3 MB)</label><input type="file" id="fi" accept="image/*" multiple onchange="addF(this)"><div id="th"></div>`:''}
 <label>ชื่อผู้บันทึกข้อมูล *</label><input id="f_recorder" value="${e(cur.recorder)}">
@@ -94,5 +98,9 @@ if(!d.recorder)return $('#msg').textContent='❗ กรุณาระบุช�
 $('#msg').textContent='กำลังบันทึก...';
 try{const im=await Promise.all(files.map(comp));await post({id:cur.id||'',data:d,images:im});$('#modal').style.display='none';go(view,flt)}catch(x){$('#msg').textContent='❗ '+x}}
 async function del(id){if(!ask()||!confirm('ยืนยันลบรายการนี้?'))return;try{await post({action:'delete',id});go(view,flt)}catch(x){alert(x)}}
+let dg;
+document.addEventListener('pointerdown',ev=>{if(!ev.target.closest('#dh'))return;const b=$('#modal>div'),q=b.getBoundingClientRect();b.style.transform='none';b.style.left=q.left+'px';b.style.top=q.top+'px';dg=[ev.clientX-q.left,ev.clientY-q.top];ev.preventDefault()});
+document.addEventListener('pointermove',ev=>{if(!dg)return;const b=$('#modal>div');b.style.left=Math.max(0,ev.clientX-dg[0])+'px';b.style.top=Math.max(0,ev.clientY-dg[1])+'px'});
+document.addEventListener('pointerup',()=>dg=0);
 go('home');
 </script></body></html>
