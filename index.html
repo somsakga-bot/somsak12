@@ -31,14 +31,14 @@ input,select,textarea{width:100%;padding:8px;border:1px solid #bbb;border-radius
 footer{background:#14532d;color:#86efac;text-align:center;padding:16px;margin-top:20px;font-weight:700;font-size:1.1rem}
 @media print{header img+div small,.bar,.chips,.tb,button,#modal{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #999;break-inside:avoid}}
 </style></head><body>
-<header><img src="logo.jpg" alt="โลโก้" onerror="this.style.display='none'"><div><h1>รายงานผลการปฏิบัติ ป้องกันปราบปรามความผิดนอมินี และขยะอุตสาหกรรม</h1><small>ตำรวจภูธรจังหวัดปราจีนบุรี</small></div></header>
+<header><img src="logo.png" alt="โลโก้" onerror="this.style.display='none'"><div><h1>รายงานผลการปฏิบัติ ป้องกันปราบปรามความผิดนอมินี และขยะอุตสาหกรรม</h1><small>ตำรวจภูธรจังหวัดปราจีนบุรี</small></div></header>
 <main id="app">กำลังโหลด...</main>
 <div id="modal"><div id="mf"></div></div>
 <footer>ตำรวจปราจีนบุรี ยินดีรับใช้ และดูแลประชาชน</footer>
 <script>
-const API='https://script.google.com/macros/s/AKfycbzhKKUkWj_JvvJgyHfdsQCnD7dt3ajErOZq5lYz-MD_iFiAFf0QqbNV2aX7uyoUQu5EQQ/exec';
+const API='ใส่ URL Web App (Apps Script) ที่นี่';
 // พิกัดโดยประมาณของ สภ. (ปรับแก้ได้) ใช้ซูมแผนที่
-const ST={'สภ.เมืองปราจีนบุรี':[14.05,101.37],'สภ.กบินทร์บุรี':[13.99,101.71],'สภ.ศรีมหาโพธิ':[13.99,101.45],'สภ.ประจันตคาม':[14.07,101.53],'สภ.ศรีมโหสถ':[13.93,101.42],'สภ.บ้านสร้าง':[13.96,101.25],'สภ.นาดี':[14.05,101.80],'สภ.ระเบาะไผ่':[13.8574064,101.5351682,13.33],'สภ.สระบัว':[13.8126069,101.6599919,13.5],'สภ.วังตะเคียน':[13.8286729,101.8645303,14.08],'สภ.วังขอนแดง':[14.02,101.60]};
+const ST={'สภ.เมืองปราจีนบุรี':[14.05,101.37],'สภ.กบินทร์บุรี':[13.99,101.71],'สภ.ศรีมหาโพธิ':[13.99,101.45],'สภ.ประจันตคาม':[14.07,101.53],'สภ.ศรีมโหสถ':[13.93,101.42],'สภ.บ้านสร้าง':[13.96,101.25],'สภ.นาดี':[14.05,101.80],'สภ.ระเบาะไผ่':[13.8574064,101.5351682,13.33],'สภ.สระบัว':[13.8126069,101.6599919,13.5],'สภ.วังตะเคียน':[13.8286729,101.8645303,14.08],'สภ.วังขอนแดง':[14.2219875,101.8922744,16]};
 const STN=Object.keys(ST);
 const CFG={
 cases:{t:'สภ.ในสังกัด (11 สภ.)',c:'#1565c0',f:[['station','สภ.','s'],['caseNo','เลขคดี','t'],['caseDate','วันที่รับคดี','d'],['suspects','ผู้ต้องหา (ชื่อ นามสกุล อายุ — 1 คนต่อ 1 บรรทัด, ถ้าไม่ทราบให้ระบุ "ไม่ทราบ")','a'],['charge','ข้อหา','t'],['business','สถานประกอบการ (ชื่อ)','t'],['address','ที่ตั้ง หมู่ที่ ตำบล อำเภอ จังหวัด','t'],['evidence','ของกลาง (ชื่อ จำนวน)','a'],['steps','ขั้นตอนการทำสำนวน (ถึงขั้นตอนใดแล้ว)','a'],['bail','การประกันตัว / ควบคุมอยู่ที่ใด','a'],['officer','ยศ ชื่อ นามสกุล พงส.','t'],['phone','เบอร์โทร พงส.','t'],['note','หมายเหตุ','a']],img:1,map:1},
