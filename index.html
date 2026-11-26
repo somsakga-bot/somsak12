@@ -31,18 +31,18 @@ input,select,textarea{width:100%;padding:8px;border:1px solid #bbb;border-radius
 footer{background:#14532d;color:#86efac;text-align:center;padding:16px;margin-top:20px;font-weight:700;font-size:1.1rem}
 @media print{header img+div small,.bar,.chips,.tb,button,#modal{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #999;break-inside:avoid}}
 </style></head><body>
-<header><img src="logo.png" alt="โลโก้" onerror="this.style.display='none'"><div><h1>รายงานผลการปฏิบัติ ป้องกันปราบปรามความผิดนอมินี และขยะอุตสาหกรรม</h1><small>ตำรวจภูธรจังหวัดปราจีนบุรี</small></div></header>
+<header><img src="logo.jpg" alt="โลโก้" onerror="this.style.display='none'"><div><h1>รายงานผลการปฏิบัติ ป้องกันปราบปรามความผิดนอมินี และขยะอุตสาหกรรม</h1><small>ตำรวจภูธรจังหวัดปราจีนบุรี</small></div></header>
 <main id="app">กำลังโหลด...</main>
 <div id="modal"><div id="mf"></div></div>
 <footer>ตำรวจปราจีนบุรี ยินดีรับใช้ และดูแลประชาชน</footer>
 <script>
-const API='ใส่ URL Web App (Apps Script) ที่นี่';
+const API='https://script.google.com/macros/s/AKfycbzgnhhoEyP2Yo2KYHkJ4TKJaYIX-TmHCCK6zdR9TXJFnqNjsdXPLkgk0iEafcEnn1VLpw/exec';
 // พิกัดโดยประมาณของ สภ. (ปรับแก้ได้) ใช้ซูมแผนที่
 const ST={'สภ.เมืองปราจีนบุรี':[14.05,101.37],'สภ.กบินทร์บุรี':[13.99,101.71],'สภ.ศรีมหาโพธิ':[13.99,101.45],'สภ.ประจันตคาม':[14.07,101.53],'สภ.ศรีมโหสถ':[13.93,101.42],'สภ.บ้านสร้าง':[13.96,101.25],'สภ.นาดี':[14.05,101.80],'สภ.ระเบาะไผ่':[13.8574064,101.5351682,13.33],'สภ.สระบัว':[13.8126069,101.6599919,13.5],'สภ.วังตะเคียน':[13.8286729,101.8645303,14.08],'สภ.วังขอนแดง':[14.2219875,101.8922744,16]};
 const STN=Object.keys(ST);
 const RED=L.divIcon({className:'',iconSize:[30,42],iconAnchor:[15,42],popupAnchor:[0,-38],html:'<svg width="30" height="42" viewBox="0 0 24 34"><path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 22 12 22s12-13 12-22C24 5.4 18.6 0 12 0z" fill="#e53935" stroke="#7f0000" stroke-width="1.5"/><circle cx="12" cy="12" r="4.5" fill="#fff"/></svg>'});
 const CFG={
-cases:{t:'สภ.ในสังกัด (11 สภ.)',c:'#1565c0',f:[['station','สภ.','s'],['caseNo','เลขคดี','t'],['caseDate','วันที่รับคดี','d'],['suspects','ผู้ต้องหา (ชื่อ นามสกุล อายุ — 1 คนต่อ 1 บรรทัด, ถ้าไม่ทราบให้ระบุ "ไม่ทราบ")','a'],['charge','ข้อหา','t'],['business','สถานประกอบการ (ชื่อ)','t'],['address','ที่ตั้ง หมู่ที่ ตำบล อำเภอ จังหวัด','t'],['evidence','ของกลาง (ชื่อ จำนวน)','a'],['steps','ขั้นตอนการทำสำนวน (ถึงขั้นตอนใดแล้ว)','a'],['bail','การประกันตัว / ควบคุมอยู่ที่ใด','a'],['verdict','ผลการตัดสินคดี','a'],['officer','ยศ ชื่อ นามสกุล พงส.','t'],['phone','เบอร์โทร พงส.','t'],['note','หมายเหตุ','a']],img:1,map:1},
+cases:{t:'สภ.ในสังกัด ภ.จว.ปราจีนบุรี (11 สภ.)',c:'#1565c0',f:[['station','สภ.','s'],['caseNo','เลขคดี','t'],['caseDate','วันที่รับคดี','d'],['suspects','ผู้ต้องหา (ชื่อ นามสกุล อายุ — 1 คนต่อ 1 บรรทัด, ถ้าไม่ทราบให้ระบุ "ไม่ทราบ")','a'],['charge','ข้อหา','t'],['business','สถานประกอบการ (ชื่อ)','t'],['address','ที่ตั้ง หมู่ที่ ตำบล อำเภอ จังหวัด','t'],['evidence','ของกลาง (ชื่อ จำนวน)','a'],['steps','ขั้นตอนการทำสำนวน (ถึงขั้นตอนใดแล้ว)','a'],['bail','การประกันตัว / ควบคุมอยู่ที่ใด','a'],['verdict','ผลการตัดสินคดี','a'],['officer','ยศ ชื่อ นามสกุล พงส.','t'],['phone','เบอร์โทร พงส.','t'],['note','หมายเหตุ','a']],img:1,map:1},
 detective:{t:'กองกำกับการสืบสวน',c:'#e65100',f:[['date','วันที่รายงาน','d'],['place','สถานที่ตรวจสอบ (ชื่อสถานที่ / ที่อยู่)','t'],['total','ออกติดตามสืบสวนเป้าหมาย (แห่ง)','n'],['targets','ชื่อเป้าหมายการตรวจสอบทั้งหมด','a'],['done','ตรวจสอบแล้ว (แห่ง)','n'],['doneList','ตรวจสอบแล้วที่ใดบ้าง','a'],['ongoing','อยู่ระหว่างตรวจสอบ (แห่ง)','n'],['ongoingList','อยู่ระหว่างตรวจสอบที่ใดบ้าง','a'],['sus','เข้าข่ายอาจกระทำผิด (แห่ง)','n'],['susList','ชื่ออะไรบ้าง และดำเนินการอย่างไรต่อ','a'],['note','หมายเหตุ','a']],img:1,map:1},
 inquiry:{t:'กลุ่มงานสอบสวน',c:'#6a1b9a',f:[['date','ข้อมูล ณ วันที่','d'],['total','จำนวนคดีทั้งหมด (คดี)','n'],['stations','อยู่ในความรับผิดชอบ สภ.ใดบ้าง','a'],['nm','คดีนอมินี (คดี)','n'],['nmD','คดีนอมินี แต่ละคดีอยู่ขั้นตอนใด','a'],['wa','คดีขยะอุตสาหกรรม (คดี)','n'],['waD','คดีขยะอุตสาหกรรม แต่ละคดีอยู่ขั้นตอนใด','a'],['ot','คดีอื่นๆ ที่เกี่ยวข้อง (คดี)','n'],['otD','คดีอื่นๆ แต่ละคดีอยู่ขั้นตอนใด','a'],['prob','ปัญหาข้อขัดข้องในคดีใดบ้าง','a'],['note','หมายเหตุ','a']]}};
 const $=s=>document.querySelector(s),e=x=>String(x??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
@@ -52,7 +52,7 @@ async function load(t){try{D[t]=(await (await fetch(API+'?type='+t)).json()).row
 async function go(v,f){view=v;flt=f||'';$('#app').innerHTML='กำลังโหลด...';if(v=='home')await Promise.all(Object.keys(CFG).map(load));else if(!D[v]||!f)await load(v);render();scrollTo(0,0)}
 function render(){view=='home'?home():list()}
 function home(){const cs=D.cases||[],n=s=>cs.filter(r=>r.station==s).length,sus=cs.reduce((a,r)=>a+String(r.suspects||'').split('\n').filter(x=>x.trim()).length,0);
-$('#app').innerHTML=`<div class="grid">${Object.entries(CFG).map(([k,c])=>`<div class="card unit" style="--c:${c.c}" onclick="go('${k}')">${c.t}<b>${(D[k]||[]).length}</b>รายการที่รายงาน — แตะเพื่อเปิด</div>`).join('')}</div>
+$('#app').innerHTML=`<div class="grid">${Object.entries(CFG).map(([k,c])=>`<div class="card unit" style="--c:${c.c}" onclick="go('${k}')">${c.t}<b>${(D[k]||[]).length}</b>คลิกเพื่อเปิดดูรายงาน</div>`).join('')}</div>
 <div class="card" style="--c:#2e7d32;margin-top:12px"><h3 style="margin:0">สรุปคดีของแต่ละ สภ. (รวม ${cs.length} คดี / ผู้ต้องหา ${sus} คน)</h3><div class="grid" style="margin-top:8px">${STN.map(s=>`<div class="chip" onclick="go('cases','${s}')">${s} : <b>${n(s)}</b> คดี</div>`).join('')}</div></div>
 <div class="card" style="--c:#00838f;margin-top:12px"><h3 style="margin:0">แผนที่สถานการณ์</h3><div id="mapbox" style="margin-top:8px"><div id="map"></div></div></div>`;
 mapInit(cs)}
