@@ -52,7 +52,7 @@ async function load(t){try{D[t]=(await (await fetch(API+'?type='+t)).json()).row
 async function go(v,f){view=v;flt=f||'';$('#app').innerHTML='กำลังโหลด...';if(v=='home')await Promise.all(Object.keys(CFG).map(load));else if(!D[v]||!f)await load(v);render();scrollTo(0,0)}
 function render(){view=='home'?home():list()}
 function home(){const cs=D.cases||[],n=s=>cs.filter(r=>r.station==s).length,sus=cs.reduce((a,r)=>a+String(r.suspects||'').split('\n').filter(x=>x.trim()).length,0);
-$('#app').innerHTML=`<div class="grid">${Object.entries(CFG).map(([k,c])=>`<div class="card unit" style="--c:${c.c}" onclick="go('${k}')">${c.t}<b>${(D[k]||[]).length}</b>รายการที่รายงาน — แตะเพื่อเปิด</div>`).join('')}</div>
+$('#app').innerHTML=`<div class="grid">${Object.entries(CFG).map(([k,c])=>`<div class="card unit" style="--c:${c.c}" onclick="go('${k}')">${c.t}<b>${(D[k]||[]).length}</b>คลิกเพื่อเปิดดูรายงาน</div>`).join('')}</div>
 <div class="card" style="--c:#2e7d32;margin-top:12px"><h3 style="margin:0">สรุปคดีของแต่ละ สภ. (รวม ${cs.length} คดี / ผู้ต้องหา ${sus} คน)</h3><div class="grid" style="margin-top:8px">${STN.map(s=>`<div class="chip" onclick="go('cases','${s}')">${s} : <b>${n(s)}</b> คดี</div>`).join('')}</div></div>
 <div class="card" style="--c:#00838f;margin-top:12px"><h3 style="margin:0">แผนที่สถานการณ์</h3><div id="mapbox" style="margin-top:8px"><div id="map"></div></div></div>`;
 mapInit(cs)}
