@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:'Sarabun','Noto Sans Thai',sans-serif;background:#eef2f6;color:#222}
 header{background:linear-gradient(90deg,#d50000e6,#d5000099),url(banner.jpg) center/cover #d50000;color:#fff;padding:12px;display:flex;gap:12px;align-items:center}
-header img{height:64px}header h1{font-size:1.05rem;margin:0}header small{opacity:.85}
+header img{height:64px}header h1{font-size:1.47rem;margin:0}header small{opacity:.85;font-size:1.17rem}
 main{max-width:1100px;margin:auto;padding:12px}
 .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 5px #0002;border-top:6px solid var(--c,#999)}
@@ -31,19 +31,20 @@ input,select,textarea{width:100%;padding:8px;border:1px solid #bbb;border-radius
 footer{background:#14532d;color:#86efac;text-align:center;padding:16px;margin-top:20px;font-weight:700;font-size:1.1rem}
 @media print{header img+div small,.bar,.chips,.tb,button,#modal{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #999;break-inside:avoid}}
 </style></head><body>
-<header><img src="logo.jpg" alt="โลโก้" onerror="this.style.display='none'"><div><h1>รายงานผลการปฏิบัติ ป้องกันปราบปรามความผิดนอมินี และขยะอุตสาหกรรม</h1><small>ตำรวจภูธรจังหวัดปราจีนบุรี</small></div></header>
+<header><img src="logo.png" alt="โลโก้" onerror="this.style.display='none'"><div><h1>รายงานผลการปฏิบัติ ป้องกันปราบปรามความผิดนอมินี และขยะอุตสาหกรรม</h1><small>ตำรวจภูธรจังหวัดปราจีนบุรี</small></div></header>
 <main id="app">กำลังโหลด...</main>
 <div id="modal"><div id="mf"></div></div>
 <footer>ตำรวจปราจีนบุรี ยินดีรับใช้ และดูแลประชาชน</footer>
 <script>
-const API='https://script.google.com/macros/s/AKfycbzgnhhoEyP2Yo2KYHkJ4TKJaYIX-TmHCCK6zdR9TXJFnqNjsdXPLkgk0iEafcEnn1VLpw/exec';
+const API='ใส่ URL Web App (Apps Script) ที่นี่';
 // พิกัดโดยประมาณของ สภ. (ปรับแก้ได้) ใช้ซูมแผนที่
 const ST={'สภ.เมืองปราจีนบุรี':[14.05,101.37],'สภ.กบินทร์บุรี':[13.99,101.71],'สภ.ศรีมหาโพธิ':[13.99,101.45],'สภ.ประจันตคาม':[14.07,101.53],'สภ.ศรีมโหสถ':[13.93,101.42],'สภ.บ้านสร้าง':[13.96,101.25],'สภ.นาดี':[14.05,101.80],'สภ.ระเบาะไผ่':[13.8574064,101.5351682,13.33],'สภ.สระบัว':[13.8126069,101.6599919,13.5],'สภ.วังตะเคียน':[13.8286729,101.8645303,14.08],'สภ.วังขอนแดง':[14.2219875,101.8922744,16]};
 const STN=Object.keys(ST);
+const AR=['จับกุมแล้ว','อยู่ระหว่างสืบสวนหาตัวผู้กระทำผิด','อยู่ระหว่างขอหมายจับ','ออกหมายจับแล้ว อยู่ระหว่างติดตามจับกุม'];
 const RED=L.divIcon({className:'',iconSize:[30,42],iconAnchor:[15,42],popupAnchor:[0,-38],html:'<svg width="30" height="42" viewBox="0 0 24 34"><path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 22 12 22s12-13 12-22C24 5.4 18.6 0 12 0z" fill="#e53935" stroke="#7f0000" stroke-width="1.5"/><circle cx="12" cy="12" r="4.5" fill="#fff"/></svg>'});
 const CFG={
-cases:{t:'สภ.ในสังกัด ภ.จว.ปราจีนบุรี (11 สภ.)',c:'#1565c0',f:[['station','สภ.','s'],['caseNo','เลขคดี','t'],['caseDate','วันที่รับคดี','d'],['suspects','ผู้ต้องหา (ชื่อ นามสกุล อายุ — 1 คนต่อ 1 บรรทัด, ถ้าไม่ทราบให้ระบุ "ไม่ทราบ")','a'],['charge','ข้อหา','t'],['business','สถานประกอบการ (ชื่อ)','t'],['address','ที่ตั้ง หมู่ที่ ตำบล อำเภอ จังหวัด','t'],['evidence','ของกลาง (ชื่อ จำนวน)','a'],['steps','ขั้นตอนการทำสำนวน (ถึงขั้นตอนใดแล้ว)','a'],['bail','การประกันตัว / ควบคุมอยู่ที่ใด','a'],['verdict','ผลการตัดสินคดี','a'],['officer','ยศ ชื่อ นามสกุล พงส.','t'],['phone','เบอร์โทร พงส.','t'],['note','หมายเหตุ','a']],img:1,map:1},
-detective:{t:'กองกำกับการสืบสวน',c:'#e65100',f:[['date','วันที่รายงาน','d'],['place','สถานที่ตรวจสอบ (ชื่อสถานที่ / ที่อยู่)','t'],['total','ออกติดตามสืบสวนเป้าหมาย (แห่ง)','n'],['targets','ชื่อเป้าหมายการตรวจสอบทั้งหมด','a'],['done','ตรวจสอบแล้ว (แห่ง)','n'],['doneList','ตรวจสอบแล้วที่ใดบ้าง','a'],['ongoing','อยู่ระหว่างตรวจสอบ (แห่ง)','n'],['ongoingList','อยู่ระหว่างตรวจสอบที่ใดบ้าง','a'],['sus','เข้าข่ายอาจกระทำผิด (แห่ง)','n'],['susList','ชื่ออะไรบ้าง และดำเนินการอย่างไรต่อ','a'],['note','หมายเหตุ','a']],img:1,map:1},
+cases:{t:'สภ.ในสังกัด (11 สภ.)',c:'#1565c0',f:[['station','สภ.','s'],['caseNo','เลขคดี','t'],['caseDate','วันที่รับคดี','d'],['victim','ผู้เสียหาย/ร้องทุกข์','a'],['arrest','การจับกุม','c'],['suspects','ผู้ต้องหา (ชื่อ นามสกุล อายุ — 1 คนต่อ 1 บรรทัด, ถ้าไม่ทราบให้ระบุ "ไม่ทราบ")','a'],['charge','ข้อหา','t'],['business','สถานประกอบการ (ชื่อ)','t'],['address','ที่ตั้ง หมู่ที่ ตำบล อำเภอ จังหวัด','t'],['evidence','ของกลาง (ชื่อ จำนวน)','a'],['steps','ขั้นตอนการทำสำนวน (ถึงขั้นตอนใดแล้ว)','a'],['bail','การประกันตัว / ควบคุมอยู่ที่ใด','a'],['officer','ยศ ชื่อ นามสกุล พงส.','t'],['phone','เบอร์โทร พงส.','t'],['note','หมายเหตุ','a']],last:[['verdict','ผลการตัดสินคดี','a']],img:1,map:1},
+detective:{t:'กองกำกับการสืบสวน',c:'#e65100',f:[['date','วันที่รายงาน','d'],['targets','ชื่อเป้าหมายการตรวจสอบทั้งหมด','a'],['place','สถานที่ตรวจสอบ (ชื่อสถานที่ / ที่อยู่)','t'],['total','ออกติดตามสืบสวนเป้าหมาย (แห่ง)','n'],['done','ตรวจสอบแล้ว (แห่ง)','n'],['doneList','ตรวจสอบแล้วที่ใดบ้าง','a'],['ongoing','อยู่ระหว่างตรวจสอบ (แห่ง)','n'],['ongoingList','อยู่ระหว่างตรวจสอบที่ใดบ้าง','a'],['sus','เข้าข่ายอาจกระทำผิด (แห่ง)','n'],['susList','ชื่ออะไรบ้าง และดำเนินการอย่างไรต่อ','a'],['arrest','การจับกุม','c'],['note','หมายเหตุ','a']],img:1,map:1},
 inquiry:{t:'กลุ่มงานสอบสวน',c:'#6a1b9a',f:[['date','ข้อมูล ณ วันที่','d'],['total','จำนวนคดีทั้งหมด (คดี)','n'],['stations','อยู่ในความรับผิดชอบ สภ.ใดบ้าง','a'],['nm','คดีนอมินี (คดี)','n'],['nmD','คดีนอมินี แต่ละคดีอยู่ขั้นตอนใด','a'],['wa','คดีขยะอุตสาหกรรม (คดี)','n'],['waD','คดีขยะอุตสาหกรรม แต่ละคดีอยู่ขั้นตอนใด','a'],['ot','คดีอื่นๆ ที่เกี่ยวข้อง (คดี)','n'],['otD','คดีอื่นๆ แต่ละคดีอยู่ขั้นตอนใด','a'],['prob','ปัญหาข้อขัดข้องในคดีใดบ้าง','a'],['note','หมายเหตุ','a']]}};
 const $=s=>document.querySelector(s),e=x=>String(x??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 const D={},PW={};let view='home',flt='',map,mk,cur,keep=[],files=[];
@@ -51,9 +52,9 @@ const tm=v=>v?new Date(v).toLocaleString('th-TH'):'',dt=v=>v?String(v).slice(0,1
 async function load(t){try{D[t]=(await (await fetch(API+'?type='+t)).json()).rows||[]}catch(x){D[t]=[]}D[t].reverse()}
 async function go(v,f){view=v;flt=f||'';$('#app').innerHTML='กำลังโหลด...';if(v=='home')await Promise.all(Object.keys(CFG).map(load));else if(!D[v]||!f)await load(v);render();scrollTo(0,0)}
 function render(){view=='home'?home():list()}
-function home(){const cs=D.cases||[],n=s=>cs.filter(r=>r.station==s).length,sus=cs.reduce((a,r)=>a+String(r.suspects||'').split('\n').filter(x=>x.trim()).length,0);
-$('#app').innerHTML=`<div class="grid">${Object.entries(CFG).map(([k,c])=>`<div class="card unit" style="--c:${c.c}" onclick="go('${k}')">${c.t}<b>${(D[k]||[]).length}</b>คลิกเพื่อเปิดดูรายงาน</div>`).join('')}</div>
-<div class="card" style="--c:#2e7d32;margin-top:12px"><h3 style="margin:0">สรุปคดีของแต่ละ สภ. (รวม ${cs.length} คดี / ผู้ต้องหา ${sus} คน)</h3><div class="grid" style="margin-top:8px">${STN.map(s=>`<div class="chip" onclick="go('cases','${s}')">${s} : <b>${n(s)}</b> คดี</div>`).join('')}</div></div>
+function home(){const cs=D.cases||[],n=s=>cs.filter(r=>r.station==s).length,su=s=>cs.filter(r=>r.station==s).reduce((a,r)=>a+String(r.suspects||'').split('\n').filter(x=>x.trim()).length,0),sus=cs.reduce((a,r)=>a+String(r.suspects||'').split('\n').filter(x=>x.trim()).length,0);
+$('#app').innerHTML=`<div class="grid">${Object.entries(CFG).map(([k,c])=>`<div class="card unit" style="--c:${c.c}" onclick="go('${k}')">${c.t}<b>${(D[k]||[]).length} รายการ</b>ที่บันทึกแล้ว — แตะเพื่อเปิด</div>`).join('')}</div>
+<div class="card" style="--c:#2e7d32;margin-top:12px"><h3 style="margin:0">สรุปคดีของแต่ละ สภ. (รวม ${cs.length} คดี / ผู้ต้องหา ${sus} คน)</h3><div class="grid" style="margin-top:8px">${STN.map(s=>`<div class="chip" onclick="go('cases','${s}')">${s} : <b>${n(s)}</b> คดี / ผู้ต้องหา <b>${su(s)}</b> คน</div>`).join('')}</div></div>
 <div class="card" style="--c:#00838f;margin-top:12px"><h3 style="margin:0">แผนที่สถานการณ์</h3><div id="mapbox" style="margin-top:8px"><div id="map"></div></div></div>`;
 mapInit(cs)}
 function mapInit(rows,z){if(map)map.remove();map=L.map('map').setView([14.05,101.55],9);
@@ -72,17 +73,17 @@ ${c.map?`${view=='cases'?`<div class="chips"><span class="chip ${flt?'':'on'}" o
 ${rows.length?rows.map(r=>`<div class="card rec" style="margin-bottom:10px">${rec(r,c)}</div>`).join(''):'<div class="card">ยังไม่มีข้อมูล</div>'}</div>`;
 if(c.map)mapInit(rows,flt)}
 function rec(r,c){const im=String(r.images||'').split('\n').filter(x=>x);
-return `<h3>${e(r.business||r.place||r.caseNo||dt(r.date)||'รายการ')}</h3>`+c.f.filter(f=>r[f[0]]!==''&&r[f[0]]!==undefined).map(f=>`<p><b>${e(f[1].split(' (')[0])}:</b>${/\n/.test(String(r[f[0]]).trim())?'\n':' '}${e(f[2]=='d'?dt(r[f[0]]):String(r[f[0]]).trim())}</p>`).join('')+
+return `<h3>${e(r.business||r.place||r.caseNo||dt(r.date)||'รายการ')}</h3>`+c.f.concat(c.last||[]).filter(f=>r[f[0]]!==''&&r[f[0]]!==undefined).map(f=>`<p><b>${e(f[1].split(' (')[0])}:</b>${/\n/.test(String(r[f[0]]).trim())?'\n':' '}${e(f[2]=='d'?dt(r[f[0]]):String(r[f[0]]).trim())}</p>`).join('')+
 (im.length?`<div class="imgs">${im.map(u=>`<a href="${e(u)}" target="_blank"><img src="${e(u)}"></a>`).join('')}</div>`:'')+
 `<p><small>ผู้บันทึก: ${e(r.recorder)} · บันทึกเมื่อ ${tm(r['บันทึกเมื่อ'])}</small></p><button onclick="edit('${r.id}')">แก้ไข</button><button class="r" onclick="del('${r.id}')">ลบ</button>`}
 function ask(){if(!PW[view]){PW[view]=prompt('กรอกรหัสผ่านผู้บันทึก/แก้ไขข้อมูล')}return PW[view]}
 function edit(id){if(!ask())return;const c=CFG[view];cur=id?D[view].find(r=>r.id==id):{};keep=String(cur.images||'').split('\n').filter(x=>x);files=[];
-const inp=([k,l,t])=>{const v=e(t=='d'?dt(cur[k]):cur[k]);return `<label>${e(l)}</label>`+(t=='a'?`<textarea id="f_${k}" rows="3">${v}</textarea>`:t=='s'?`<select id="f_${k}">${STN.map(s=>`<option ${cur[k]==s?'selected':''}>${s}</option>`).join('')}</select>`:`<input id="f_${k}" type="${t=='d'?'date':t=='n'?'number':'text'}" value="${v}">`)};
+const inp=([k,l,t])=>{const v=e(t=='d'?dt(cur[k]):cur[k]);return `<label>${e(l)}</label>`+(t=='a'?`<textarea id="f_${k}" rows="3">${v}</textarea>`:t=='c'?`<div id=\"f_${k}\">${AR.map(o=>`<label style=\"font-weight:400\"><input type=\"checkbox\" style=\"width:auto\" value=\"${o}\" ${String(cur[k]||'').split('\n').includes(o)?'checked':''}> ${o}</label>`).join('')}</div>`:t=='s'?`<select id="f_${k}">${STN.map(s=>`<option ${cur[k]==s?'selected':''}>${s}</option>`).join('')}</select>`:`<input id="f_${k}" type="${t=='d'?'date':t=='n'?'number':'text'}" value="${v}">`)};
 $('#modal>div').removeAttribute('style');
 $('#mf').innerHTML=`<div id="dh">✥ ลากที่แถบนี้เพื่อย้ายฟอร์ม</div><h3>${c.t}</h3>${c.f.map(inp).join('')}
 ${c.map?`<label>ปักหมุดสถานประกอบการ (แตะแผนที่)</label><div id="pm"></div><button type="button" class="g" onclick="gps()">📍 ใช้ตำแหน่งปัจจุบัน</button><small id="ll"></small>`:''}
 ${c.img?`<label>รูปภาพ (ไม่เกิน 6 ภาพ ภาพละไม่เกิน 3 MB)</label><input type="file" id="fi" accept="image/*" multiple onchange="addF(this)"><div id="th"></div>`:''}
-<label>ชื่อผู้บันทึกข้อมูล *</label><input id="f_recorder" value="${e(cur.recorder)}">
+${(c.last||[]).map(inp).join('')}<label>ชื่อผู้บันทึกข้อมูล *</label><input id="f_recorder" value="${e(cur.recorder)}">
 <p><button onclick="save()">💾 บันทึก</button><button class="g" onclick="$('#modal').style.display='none'">ยกเลิก</button></p><div id="msg"></div>`;
 $('#modal').style.display='block';if(c.map)setTimeout(pm,100);th()}
 let pmap,pmk;function pm(){pmap=L.map('pm').setView(cur.lat?[+cur.lat,+cur.lng]:[14.05,101.5],cur.lat?15:9);
@@ -93,7 +94,7 @@ function addF(i){[...i.files].forEach(f=>{if(keep.length+files.length<6)files.pu
 function th(){const t=$('#th');if(!t)return;t.innerHTML=keep.map((u,i)=>`<div class="thumb"><img src="${e(u)}" height="70"><span onclick="keep.splice(${i},1);th()">×</span></div>`).join('')+files.map((f,i)=>`<div class="thumb"><img src="${URL.createObjectURL(f)}" height="70"><span onclick="files.splice(${i},1);th()">×</span></div>`).join('')}
 const comp=f=>new Promise(r=>{const i=new Image();i.onload=()=>{const s=Math.min(1,1600/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.8).split(',')[1])};i.src=URL.createObjectURL(f)});
 async function post(o){const r=await fetch(API,{method:'POST',body:JSON.stringify({type:view,password:PW[view],...o})});const j=await r.json();if(!j.ok){if(/รหัส/.test(j.msg))PW[view]='';throw j.msg}return j}
-async function save(){const c=CFG[view],d={};c.f.forEach(f=>d[f[0]]=$('#f_'+f[0]).value);
+async function save(){const c=CFG[view],d={};c.f.concat(c.last||[]).forEach(f=>d[f[0]]=f[2]=='c'?[...$('#f_'+f[0]).querySelectorAll('input:checked')].map(i=>i.value).join('\n'):$('#f_'+f[0]).value);
 if(c.map){d.lat=cur.lat||'';d.lng=cur.lng||''}d.recorder=$('#f_recorder').value.trim();d.images=keep.join('\n');
 if(!d.recorder)return $('#msg').textContent='❗ กรุณาระบุชื่อผู้บันทึกข้อมูล';
 $('#msg').textContent='กำลังบันทึก...';
